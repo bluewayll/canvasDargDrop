@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sanadtech</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<script src="https://cdn.rawgit.com/konvajs/konva/1.2.2/konva.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	</head>
+	<body>
+		<div id="header" class="text-center">
+			<h1>Sanadtech</h1>
+			<h5>Click or tap twice on a shape to remove it</h5>
+		</div>
+		<div>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-2">
+						<div class="col-md-12">
+							<img id="Line" src="Line.png" draggable="true" width="135" height="50" ondragstart="drag(event)">
+						</div>
+						<div class="col-md-12">
+							<img id="Circle" src="Circle.png" draggable="true" width="135" height="100" ondragstart="drag(event)">
+							<br />
+						</div>
+						<div class="col-md-12">
+							<img id="Rect" src="Rect.png" draggable="true" width="135" height="100" ondragstart="drag(event)">
+						</div>
+						<div class="col-md-12">
+							<img id="Square" src="Square.png" draggable="true" width="135" height="135" ondragstart="drag(event)">
+						</div>
+					</div>    
+					<div class="col-md-10" >
+						<div style="overflow: hidden; background-color: #F0F0F0;" id="container" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+					</div>
+					<div class="col-md-12" >
+						<h5><a class="btn btn-default btn-block" href="#" role="button"  onclick="Clear()">Clear canvas</a></h5>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+			function allowDrop(ev) {
+				ev.preventDefault();
+			}
+			
+			function drop(ev) {
+				ev.preventDefault();
+				var data = ev.dataTransfer.getData("type");
+				if(data === 'Line') 
+					createLine();
+				if(data === 'Circle') 
+					createCircle();
+				if(data === 'Rect') 
+					createRect();
+				if(data === 'Square') 
+					createSquare();
+			}
+			
+			function drag(ev) {
+				ev.dataTransfer.setData("type", ev.target.id);
+			}
+			
+			if(localStorage.getItem('canvas')) {
+				var json = localStorage.getItem('canvas');
+				stage = Konva.Node.create(json, 'container');
+
+					var rects = stage.find('Rect');
+					rects.each(function(shape) {
+					  shape.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					  });
+					  shape.on('mouseout', function() {
+						  document.body.style.cursor = 'default';
+					  });
+					  shape.on("dblclick dbltap", function() {
+							  this.destroy();
+							  stage.draw();
+							  Save();
+					  });
+					  shape.on('dragend', function() {
+						Save();
+					  });
+					});
+
+					var circles = stage.find('Circle');
+					circles.each(function(shape) {
+					  shape.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					  });
+					  shape.on('mouseout', function() {
+						  document.body.style.cursor = 'default';
+					  });
+					  shape.on("dblclick dbltap", function() {
+							  this.destroy();
+							  stage.draw();
+							  Save();
+					  });
+					  shape.on('dragend', function() {
+						Save();
+					  });
+					});
+
+					var lines = stage.find('Line');
+					lines.each(function(shape) {
+					  shape.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					  });
+					  shape.on('mouseout', function() {
+						  document.body.style.cursor = 'default';
+					  });
+					  shape.on("dblclick dbltap", function() {
+							  this.destroy();
+							  stage.draw();
+							  Save();
+					  });
+					  shape.on('dragend', function() {
+						Save();
+					  });
+					});
+				}
+			else {
+				var json = '{"attrs":{"width":1366,"height":407},"className":"Stage","children":[]}';
+				var stage = Konva.Node.create(json, 'container');
+				}
+			var width = window.innerWidth;
+			var height = window.innerHeight;
+			
+			function createLine(xLine,yLine){
+
+					var layer = new Konva.Layer();
+
+					var Line = new Konva.Line({
+					  x: stage.getWidth() / 6,
+					  y: stage.getHeight() / 6,
+					  points: [0, 10, 20, 30, 40, 50, 60, 70],
+					  stroke: 'black',
+					  lineCap: 'round',
+					  lineJoin: 'round',
+					  draggable: true
+					});
+
+					Line.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					});
+					Line.on('mouseout', function() {
+						document.body.style.cursor = 'default';
+					});
+					Line.on("dblclick dbltap", function() {
+							this.destroy();
+							layer.draw();
+							Save();
+					});
+					Line.on('dragend', function() {
+						Save();
+					});
+
+					layer.add(Line);
+
+					stage.add(layer);
+
+					Save();
+				  }
+
+				  function createRect(){
+
+					var layer = new Konva.Layer();
+
+					var rect = new Konva.Rect({
+                      x: stage.getWidth() / 6,
+					  y: stage.getHeight() / 6,
+					  width: 140,
+					  height: 70,
+					  fill: 'black',
+					  stroke: 'black',
+					  strokeWidth: 4,
+					  draggable : true
+					});
+					rect.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					});
+					rect.on('mouseout', function() {
+						document.body.style.cursor = 'default';
+					});
+					rect.on("dblclick dbltap", function() {
+							this.destroy();
+							layer.draw();
+							Save();
+					});
+					rect.on('dragend', function() {
+						Save();
+					});
+
+					layer.add(rect);
+					stage.add(layer);
+					Save();
+				  }
+
+				  function createSquare(){
+
+					var layer = new Konva.Layer();
+
+					var rect = new Konva.Rect({
+                                          x: stage.getWidth() / 6,
+					  y: stage.getHeight() / 6,
+					  width: 70,
+					  height: 70,
+					  fill: 'black',
+					  stroke: 'black',
+					  strokeWidth: 4,
+					  draggable : true
+					});
+					rect.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					});
+					rect.on('mouseout', function() {
+						document.body.style.cursor = 'default';
+					});
+					rect.on("dblclick dbltap", function() {
+							this.destroy();
+							layer.draw();
+							Save();
+					});
+					rect.on('dragend', function() {
+						Save();
+					});
+
+					layer.add(rect);
+					stage.add(layer);
+					Save();
+				  }
+
+				  function createCircle() {
+
+					var layer = new Konva.Layer();
+
+					var circle = new Konva.Circle({
+					  x: stage.getWidth() / 6,
+					  y: stage.getHeight() / 6,
+					  radius: 40,
+					  fill: 'black',
+					  stroke: 'black',
+					  strokeWidth: 4,
+					  draggable :true
+					});
+
+					circle.on('mouseover', function() {
+						document.body.style.cursor = 'pointer';
+					});
+					circle.on('mouseout', function() {
+						document.body.style.cursor = 'default';
+					});
+					circle.on("dblclick dbltap", function() {
+							this.destroy();
+							layer.draw();
+							Save();
+					});
+					circle.on('dragend', function() {
+						Save();
+					});
+
+
+					layer.add(circle);
+
+					stage.add(layer);
+					Save();
+				}
+
+				function Save(){
+					json = stage.toJSON();
+					localStorage.setItem('canvas',json);
+				}
+
+				function Clear(){
+					json = '{"attrs":{"width":1366,"height":407},"className":"Stage","children":[]}';
+					stage = Konva.Node.create(json, 'container');
+					Save();
+				}
+		</script>
+	</body>
+</html>
+
